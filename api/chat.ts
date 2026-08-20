@@ -62,7 +62,7 @@ Valores de referência 2025:
       body: JSON.stringify({
         system_instruction: { parts: [{ text: systemPrompt }] },
         contents: geminiMessages,
-        generationConfig: { maxOutputTokens: 2048, temperature: 0.7 },
+        generationConfig: { maxOutputTokens: 8192, temperature: 0.7 },
       }),
     });
 

@@ -59,11 +59,14 @@ export function ChatBot() {
     setLoading(true);
 
     try {
+      // Keeps last 20 messages to avoid huge payloads while maintaining context
+      const historyToSend = newMessages.slice(-20);
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+          messages: historyToSend.map(m => ({ role: m.role, content: m.content })),
           employeeContext: buildEmployeeContext(),
         }),
       });
@@ -121,6 +124,13 @@ export function ChatBot() {
       e.preventDefault();
       sendMessage();
     }
+  }
+
+  function handleInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setInput(e.target.value);
+    // Auto-resize textarea
+    e.target.style.height = 'auto';
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
   }
 
   return (
@@ -223,11 +233,12 @@ export function ChatBot() {
             <textarea
               ref={inputRef}
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Digite sua pergunta..."
+              placeholder="Digite sua pergunta... (Enter para enviar, Shift+Enter para nova linha)"
               rows={1}
-              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-none text-sm"
+              style={{ minHeight: '42px', maxHeight: '160px' }}
+              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-none text-sm overflow-y-auto"
             />
             <button
               type="button"
