@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import { Layout } from './components/layout/Layout';
 import { Login } from './pages/Login';
+import { ResetPassword } from './pages/ResetPassword';
 import { Dashboard } from './pages/Dashboard';
 import { Employees } from './pages/Employees';
 import { EmployeeDetail } from './pages/EmployeeDetail';
@@ -12,7 +13,7 @@ import { Payslip } from './pages/Payslip';
 import { ChatBot } from './pages/ChatBot';
 
 export default function App() {
-  const { user, loading, signIn, signUp, signOut } = useAuth();
+  const { user, loading, isRecovery, signIn, signUp, signOut, resetPassword, updatePassword } = useAuth();
 
   if (loading) {
     return (
@@ -25,8 +26,13 @@ export default function App() {
     );
   }
 
+  // Usuário clicou no link de redefinição de senha
+  if (isRecovery && user) {
+    return <ResetPassword onUpdatePassword={updatePassword} />;
+  }
+
   if (!user) {
-    return <Login onLogin={signIn} onSignUp={signUp} />;
+    return <Login onLogin={signIn} onSignUp={signUp} onResetPassword={resetPassword} />;
   }
 
   return (
